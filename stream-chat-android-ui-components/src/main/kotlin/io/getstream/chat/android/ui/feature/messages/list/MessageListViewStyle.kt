@@ -284,7 +284,7 @@ public data class MessageListViewStyle(
                         R.styleable.AudioRecordPlayerView,
                     ).use {
                         audioRecordViewStyleOwn = AudioRecordPlayerViewStyle(
-                            context = context, attributes = it
+                            context = context, attributes = it,
                         )
                     }
                 }
@@ -300,7 +300,7 @@ public data class MessageListViewStyle(
                         R.styleable.AudioRecordPlayerView,
                     ).use {
                         audioRecordViewStyleTheirs = AudioRecordPlayerViewStyle(
-                            context = context, attributes = it
+                            context = context, attributes = it,
                         )
                     }
                 }
