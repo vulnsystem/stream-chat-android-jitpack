@@ -58,8 +58,8 @@ subprojects {
 
 allprojects {
     repositories {
-        // google()
-        // mavenCentral()
+        google()
+        mavenCentral()
         maven {
             url "https://jitpack.io"
             content {
