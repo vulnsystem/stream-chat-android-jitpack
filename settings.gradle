@@ -69,7 +69,3 @@ dependencyResolutionManagement {
     		maven { url 'https://jitpack.io' }
 	}
 }
-
-dependencies {
-	implementation 'com.github.TheBestOrNothing:stream-chat-android:v6.0.8'
-}
