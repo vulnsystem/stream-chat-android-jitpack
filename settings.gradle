@@ -61,3 +61,15 @@ gradleEnterprise {
 		termsOfServiceAgree = "yes"
 	}
 }
+
+dependencyResolutionManagement {
+	repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+	repositories {
+    		mavenCentral()
+    		maven { url 'https://jitpack.io' }
+	}
+}
+
+dependencies {
+	implementation 'com.github.TheBestOrNothing:stream-chat-android:v6.0.8'
+}
