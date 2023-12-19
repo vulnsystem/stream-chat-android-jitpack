@@ -5,4 +5,4 @@ install:
   - echo "Running a custom install command"
   - ./gradlew clean -Pgroup=$GROUP -Pversion=$VERSION -xtest -xlint assembleRelease -x :stream-chat-android-docs:assembleRelease publishReleasePublicationToMavenLocal
 
-#  - ./gradlew clean -Pgroup=$GROUP -Pversion=$VERSION -xtest -xlint assembleRelease -x :stream-chat-android-ui-components-sample:assembleRelease -x :stream-chat-android-compose-sample:assembleRelease -x :stream-chat-android-docs:assembleRelease publishReleasePublicationToMavenLocal
+#- ./gradlew clean -Pgroup=$GROUP -Pversion=$VERSION -xtest -xlint assembleRelease -x :stream-chat-android-ui-components-sample:assembleRelease -x :stream-chat-android-compose-sample:assembleRelease -x :stream-chat-android-docs:assembleRelease publishReleasePublicationToMavenLocal
