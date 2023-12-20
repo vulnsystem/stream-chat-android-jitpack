@@ -10,5 +10,5 @@ object Configuration {
     const val patchVersion = 8
     const val versionName = "$majorVersion.$minorVersion.$patchVersion"
     const val snapshotVersionName = "$majorVersion.$minorVersion.${patchVersion + 1}-SNAPSHOT"
-    const val artifactGroup = "io.getstream"
+    const val artifactGroup = "io.gitcoins"
 }

@@ -51,11 +51,11 @@ afterEvaluate {
                 pom {
                     name = PUBLISH_ARTIFACT_ID
                     description = 'Stream Chat official Android SDK'
-                    url = 'https://github.com/getstream/stream-chat-android'
+                    url = 'https://github.com/thebestornothing/stream-chat-android'
                     licenses {
                         license {
                             name = 'Stream License'
-                            url = 'https://github.com/GetStream/stream-chat-android/blob/main/LICENSE'
+                            url = 'https://github.com/thebestornothing/stream-chat-android/blob/main/LICENSE'
                         }
                     }
                     developers {
@@ -101,9 +101,9 @@ afterEvaluate {
                         }
                     }
                     scm {
-                        connection = 'scm:git:github.com/getstream/stream-chat-android.git'
-                        developerConnection = 'scm:git:ssh://github.com/getstream/stream-chat-android.git'
-                        url = 'https://github.com/getstream/stream-chat-android/tree/main'
+                        connection = 'scm:git:github.com/thebestornothing/stream-chat-android.git'
+                        developerConnection = 'scm:git:ssh://github.com/thebestornothing/stream-chat-android.git'
+                        url = 'https://github.com/thebestornothing/stream-chat-android/tree/main'
                     }
                 }
             }
