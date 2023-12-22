@@ -7,6 +7,7 @@ ext["sonatypeStagingProfileId"] = ''
 ext["signing.keyId"] = ''
 ext["signing.password"] = ''
 ext["signing.key"] = ''
+ext["signing.secretKeyRingFile"] = ''
 ext["snapshot"] = ''
 
 File secretPropsFile = project.rootProject.file('local.properties')
