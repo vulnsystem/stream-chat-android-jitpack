@@ -1,4 +1,4 @@
 jdk: openjdk17
 install:
   - echo "Running a custom install command"
-  - ./gradlew assembleRelease -x :stream-chat-android-ui-components-sample:assembleRelease -x :stream-chat-android-compose-sample:assembleRelease -x :stream-chat-android-docs:assembleRelease
+  - ./gradlew assembleRelease -x :stream-chat-android-ui-components-sample:assembleRelease -x :stream-chat-android-compose-sample:assembleRelease -x :stream-chat-android-docs:assembleRelease publishReleasePublicationToMavenLocal
