@@ -22,29 +22,28 @@ import org.json.JSONException
 import org.json.JSONObject
 import java.nio.charset.StandardCharsets
 
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.web3j.crypto.Keys;
-import com.fasterxml.jackson.core.JsonProcessingException;
+import com.nimbusds.jose.JWSVerifier
+import com.nimbusds.jose.crypto.ECDSAVerifier
+import com.nimbusds.jose.jwk.ECKey
+import com.nimbusds.jose.jwk.JWK
+import com.nimbusds.jose.util.Base64URL
+import com.nimbusds.jwt.SignedJWT
+import io.ethers.core.types.Address
+import io.ethers.crypto.Secp256k1
+import org.bouncycastle.jce.provider.BouncyCastleProvider
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nimbusds.jose.JOSEException;
-import com.nimbusds.jose.JWSVerifier;
-import com.nimbusds.jose.crypto.ECDSAVerifier;
-import com.nimbusds.jose.jwk.ECKey;
-import com.nimbusds.jose.jwk.JWK;
-import com.nimbusds.jose.util.Base64URL;
-import com.nimbusds.jwt.JWTClaimsSet;
-import com.nimbusds.jwt.SignedJWT;
-import java.math.BigInteger;
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 internal object TokenUtils {
 
     val logger by taggedLogger("Chat:TokenUtils")
+    fun getUserId(token: String): String? {
 
-    fun getUserId(token: String): String {
         val jwt: SignedJWT
         val publicKey: JWK?
-        val addressFromToken: String
+        var addressFromToken: String?=null
+
         try {
             jwt = SignedJWT.parse(token)
             publicKey = jwt.header.jwk
@@ -63,40 +62,30 @@ internal object TokenUtils {
             addressFromToken = publicKeyToAddress(publicKey)
         } catch (e: Exception) {
             logger.e(e) {"token verification failure"}
-            return ""
+        } finally {
+            return addressFromToken
         }
-
-        return addressFromToken
     }
-    private fun publicKeyToAddress(publicKey: JWK): String {
+
+    private fun publicKeyToAddress(publicKey: JWK): String? {
+        val UNCOMPRESSED_KEY_FLAG = (0x04).toByte()
         val objectMapper = ObjectMapper()
-        var jsonNode: JsonNode? = null
-        try {
-            jsonNode = objectMapper.readTree(publicKey.toJSONString())
+        var jsonNode: JsonNode? = try {
+            objectMapper.readTree(publicKey.toJSONString())
         } catch (e: JsonProcessingException) {
             e.printStackTrace()
-            throw RuntimeException(e)
-            return ""
+            return null
         }
-        val yBase64: Base64URL = Base64URL.from(jsonNode.get("y").toString())
-        val yBytes: ByteArray = yBase64.decode()
-        val yHexStr = bytesToHex(yBytes)
-        val xBase64: Base64URL = Base64URL.from(jsonNode.get("x").toString())
-        val xBytes: ByteArray = xBase64.decode()
-        val xHexStr = bytesToHex(xBytes)
-        val publicKeyHexStr = xHexStr + yHexStr
-        val publicKeyBig = BigInteger(publicKeyHexStr, 16)
-        return Keys.getAddress(publicKeyBig)
-    }
 
-    // Convert raw bytes to hexadecimal string
-    private fun bytesToHex(bytes: ByteArray): String {
-        val hexString = StringBuilder()
-        for (b in bytes) {
-            val hex = String.format("%02x", b)
-            hexString.append(hex)
-        }
-        return hexString.toString()
+        val xBase64 = Base64URL.from(jsonNode!!.get("x").toString())
+        val xBytes = xBase64.decode()
+
+        val yBase64 = Base64URL.from(jsonNode!!.get("y").toString())
+        val yBytes = yBase64.decode()
+
+        val compressKey = byteArrayOf(UNCOMPRESSED_KEY_FLAG) + xBytes + yBytes
+        val address = Address(Secp256k1.publicKeyToAddress(compressKey))
+        return address.toString()
     }
 
     fun getUserId1(token: String): String = try {
