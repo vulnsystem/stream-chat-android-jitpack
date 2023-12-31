@@ -21,6 +21,7 @@ import io.getstream.chat.android.client.errors.extractCause
 import io.getstream.chat.android.client.errors.fromChatErrorCode
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.parser.ChatParser
+import io.getstream.log.taggedLogger
 import io.getstream.result.Error
 import io.getstream.result.Result
 import io.getstream.result.recover
@@ -40,13 +41,16 @@ internal class StreamWebSocket(
     socketCreator: (WebSocketListener) -> WebSocket,
 ) {
     private val eventFlow = MutableSharedFlow<StreamWebSocketEvent>(extraBufferCapacity = EVENTS_BUFFER_SIZE)
+    private val logger by taggedLogger("Chat:StreamWebSocket")
 
     private val webSocket = socketCreator(object : WebSocketListener() {
         override fun onMessage(webSocket: WebSocket, text: String) {
+            logger.i { "onMessage: $text" }
             eventFlow.tryEmit(parseMessage(text))
         }
 
         override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
+            logger.i { "onMessage: $response" }
             eventFlow.tryEmit(
                 StreamWebSocketEvent.Error(
                     Error.NetworkError.fromChatErrorCode(
@@ -58,6 +62,7 @@ internal class StreamWebSocket(
         }
 
         override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
+            logger.i { "onMessage: $code $reason" }
             if (code != CLOSE_SOCKET_CODE) {
                 // Treat as failure and reconnect, socket shouldn't be closed by server
                 eventFlow.tryEmit(

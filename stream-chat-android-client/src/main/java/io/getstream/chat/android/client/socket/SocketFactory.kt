@@ -37,7 +37,8 @@ internal class SocketFactory(
     @Throws(UnsupportedEncodingException::class)
     fun createSocket(connectionConf: ConnectionConf): StreamWebSocket {
         val request = buildRequest(connectionConf)
-        logger.i { "new web socket: ${request.url}" }
+        //logger.i { "new web socket: ${request.url}" }
+        logger.i { "new web socket: $request" }
         return StreamWebSocket(parser) { httpClient.newWebSocket(request, it) }
     }
 

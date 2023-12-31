@@ -8,7 +8,8 @@ object Configuration {
     const val majorVersion = 6
     const val minorVersion = 0
     const val patchVersion = 8
-    const val versionName = "$majorVersion.$minorVersion.$patchVersion"
+    const val myVersion = 3
+    const val versionName = "$majorVersion.$minorVersion.$patchVersion.$myVersion"
     const val snapshotVersionName = "$majorVersion.$minorVersion.${patchVersion + 1}-SNAPSHOT"
     const val artifactGroup = "io.gitcoins"
 }
