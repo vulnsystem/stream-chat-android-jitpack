@@ -40,6 +40,7 @@ internal class HttpLoggingInterceptor : Interceptor {
     @Suppress("LongMethod", "ComplexMethod", "ReturnCount", "TooGenericExceptionCaught", "ReturnCount")
     override fun intercept(chain: Interceptor.Chain): Response {
         val request = chain.request()
+        logger.i { "HTTP Request $request" }
         if (!StreamLog.isInstalled) {
             return chain.proceed(request)
         }
@@ -84,6 +85,7 @@ internal class HttpLoggingInterceptor : Interceptor {
         val response: Response
         try {
             response = chain.proceed(request)
+            logger.i { "HTTP Response $response" }
         } catch (e: Exception) {
             logger.i { "<-- HTTP FAILED: $e" }
             throw e
