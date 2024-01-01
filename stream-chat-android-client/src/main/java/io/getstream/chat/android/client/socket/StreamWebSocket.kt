@@ -50,7 +50,7 @@ internal class StreamWebSocket(
         }
 
         override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
-            logger.i { "onMessage: $response" }
+            logger.i { "onFailure: $response" }
             eventFlow.tryEmit(
                 StreamWebSocketEvent.Error(
                     Error.NetworkError.fromChatErrorCode(
@@ -62,7 +62,7 @@ internal class StreamWebSocket(
         }
 
         override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
-            logger.i { "onMessage: $code $reason" }
+            logger.i { "onClosed: $code $reason" }
             if (code != CLOSE_SOCKET_CODE) {
                 // Treat as failure and reconnect, socket shouldn't be closed by server
                 eventFlow.tryEmit(
@@ -80,8 +80,9 @@ internal class StreamWebSocket(
     fun close(): Boolean = webSocket.close(CLOSE_SOCKET_CODE, CLOSE_SOCKET_REASON)
     fun listen(): Flow<StreamWebSocketEvent> = eventFlow.asSharedFlow()
 
-    private fun parseMessage(text: String): StreamWebSocketEvent =
-        parser.fromJsonOrError(text, ChatEvent::class.java)
+    private fun parseMessage(text: String): StreamWebSocketEvent {
+        logger.i { "parseMessage: $text" }
+        return parser.fromJsonOrError(text, ChatEvent::class.java)
             .map { StreamWebSocketEvent.Message(it) }
             .recover { parseChatError ->
                 val errorResponse =
@@ -89,6 +90,7 @@ internal class StreamWebSocket(
                         is Result.Success -> {
                             chatErrorResult.value.error
                         }
+
                         is Result.Failure -> null
                     }
                 StreamWebSocketEvent.Error(
@@ -104,6 +106,7 @@ internal class StreamWebSocket(
                     ),
                 )
             }.value
+    }
 }
 
 internal sealed class StreamWebSocketEvent {
