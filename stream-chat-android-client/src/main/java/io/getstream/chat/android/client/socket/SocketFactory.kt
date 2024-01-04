@@ -42,10 +42,20 @@ internal class SocketFactory(
     }
 
     @Throws(UnsupportedEncodingException::class)
-    private fun buildRequest(connectionConf: ConnectionConf): Request =
-        Request.Builder()
+    private fun buildRequest(connectionConf: ConnectionConf): Request {
+        var req = Request.Builder()
             .url(buildUrl(connectionConf))
             .build()
+        var url = req.url.newBuilder()
+            .addQueryParameter("api_key", connectionConf.apiKey)
+            .build()
+
+        return req.newBuilder()
+            .url(url)
+            .header("Authorization", tokenManager.getToken())
+            .build()
+    }
+
 
     @Suppress("TooGenericExceptionCaught")
     @Throws(UnsupportedEncodingException::class)

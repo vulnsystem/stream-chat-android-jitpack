@@ -24,6 +24,7 @@ import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.result.Error
 import io.getstream.result.Result
 import io.getstream.result.recover
+import io.getstream.log.taggedLogger
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -40,13 +41,16 @@ internal class StreamWebSocket(
     socketCreator: (WebSocketListener) -> WebSocket,
 ) {
     private val eventFlow = MutableSharedFlow<StreamWebSocketEvent>(extraBufferCapacity = EVENTS_BUFFER_SIZE)
+    private val logger by taggedLogger("Chat:StreamWebSocket")
 
     private val webSocket = socketCreator(object : WebSocketListener() {
         override fun onMessage(webSocket: WebSocket, text: String) {
+            logger.i { "onMessage: $text" }
             eventFlow.tryEmit(parseMessage(text))
         }
 
         override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
+            logger.i { "onFailure: $response" }
             eventFlow.tryEmit(
                 StreamWebSocketEvent.Error(
                     Error.NetworkError.fromChatErrorCode(
@@ -58,6 +62,7 @@ internal class StreamWebSocket(
         }
 
         override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
+            logger.i { "onClosed: $code : $String" }
             if (code != CLOSE_SOCKET_CODE) {
                 // Treat as failure and reconnect, socket shouldn't be closed by server
                 eventFlow.tryEmit(
@@ -75,8 +80,9 @@ internal class StreamWebSocket(
     fun close(): Boolean = webSocket.close(CLOSE_SOCKET_CODE, CLOSE_SOCKET_REASON)
     fun listen(): Flow<StreamWebSocketEvent> = eventFlow.asSharedFlow()
 
-    private fun parseMessage(text: String): StreamWebSocketEvent =
-        parser.fromJsonOrError(text, ChatEvent::class.java)
+    private fun parseMessage(text: String): StreamWebSocketEvent {
+        logger.i { "parseMessage: $text" }
+        return parser.fromJsonOrError(text, ChatEvent::class.java)
             .map { StreamWebSocketEvent.Message(it) }
             .recover { parseChatError ->
                 val errorResponse =
@@ -99,6 +105,8 @@ internal class StreamWebSocket(
                     ),
                 )
             }.value
+    }
+
 }
 
 internal sealed class StreamWebSocketEvent {
