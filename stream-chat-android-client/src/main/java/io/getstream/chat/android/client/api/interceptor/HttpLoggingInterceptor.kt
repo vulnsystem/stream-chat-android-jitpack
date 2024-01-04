@@ -85,7 +85,7 @@ internal class HttpLoggingInterceptor : Interceptor {
         val response: Response
         try {
             response = chain.proceed(request)
-            logger.i { "HTTP $response" }
+            logger.i { "HTTP ${response.code} ${response.protocol} ${response.headers} ${response.body}" }
         } catch (e: Exception) {
             logger.i { "<-- HTTP FAILED: $e" }
             throw e
