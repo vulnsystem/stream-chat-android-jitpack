@@ -1,7 +1,7 @@
 import io.getstream.chat.android.Dependencies
 import io.getstream.chat.android.Configuration
 
-apply plugin: 'com.android.library'
+//apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'com.google.devtools.ksp'
 apply plugin: "de.mannodermaus.android-junit5"
